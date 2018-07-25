@@ -1,0 +1,16 @@
+.mat-dialog-content {
+    overflow: hidden;
+}
+
+.button {
+    background-color: rgb(76, 99, 175); 
+    margin-top: 15px;
+    margin-left: 25px;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 15px;
+}

@@ -1,0 +1,147 @@
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+<!-- ################## sidenav bar #################################### -->
+
+<div class="sidenav-container">
+   <h3 style="text-align: center;">Online</h3>
+   <mat-list-item *ngFor="let onlineUser of onlineUsers" class="onlineUsers" >
+      <!-- <div *ngIf="user.name != onlineUser.userName"> -->
+          <div>
+         <b>{{ onlineUser.name }}</b>
+         <a href="#" (click)="startPersonalChat(onlineUser.email,onlineUser.name,true)"><i class="fa fa-comments-o"></i></a>
+      </div>
+     
+   </mat-list-item>
+   <h3 style="text-align: center;">Offline</h3>
+   <mat-list-item *ngFor="let offlineUser of offlineUsers" class="onlineUsers" >
+      <!-- <div *ngIf="user.name != onlineUser.userName"> -->
+          <div>
+         <b>{{ offlineUser.name }}</b>
+         <a href="#" (click)="startPersonalChat(offlineUser.email,offlineUser.name,false)"><i class="fa fa-comments-o"></i></a>
+      </div>
+    
+   </mat-list-item>
+</div>
+
+<!-- ################## groupchat container #################################### -->
+<!-- *ngIf="groupChat" -->
+<div class="chat-container" >
+    <!-- <div *ngIf='personalChat'> -->
+
+        <div *ngFor='let item of senderSideChatButtonNames'>
+                <button type="button" [disabled] = 'item.buttonStatus' (click)="chatBoxPopup(item.userTo)">
+                    {{item.userTo}}<div *ngFor='let i of unreadMessageCount'>
+                        <span *ngIf='item.room == i.room && i.count != 0'>({{i.count}})</span>
+                    </div>
+                </button>
+        </div>
+
+
+    <!-- </div> -->
+    <!-- <div *ngIf = 'recieverPersonalChat'> -->
+
+        <!-- <div *ngFor = 'let item of recieverSideChatButtonNames'>
+            <button type="button" (click)="chatBoxPopup(item)">{{item}}</button>
+        </div> -->
+
+    <!-- </div> -->
+   <mat-card class="main-card" #matCardScroll (scroll)="onScroll($event)">
+   <mat-list>
+      <b>{{ videoData.title }}</b>
+   </mat-list>
+   <mat-list class="chat-list">
+      <!-- <mat-list-item *ngFor="let status of roomJoinStatus">
+         <p style="text-align: center;">
+            <span>
+            <b>{{ status.userName }} has joined the room</b>
+            </span>
+         </p>
+      </mat-list-item> -->
+      <mat-list-item *ngFor="let message of messages" [ngClass]="[(message.action ===  undefined && message.id === user.id)? 'chat-list-item': '']">
+      <img mat-list-avatar *ngIf="message.action === undefined" [src]="message.from.image">
+      <h4 mat-line *ngIf="message.action === undefined">
+         <b>{{message.from.name}}</b> - {{ message.time }}
+      </h4>
+      <p mat-line *ngIf="message.action === undefined">
+         <span [innerHTML]="message.content | linky | emojify"></span>
+      </p>
+      </mat-list-item>
+   </mat-list>
+   <div class="chat-footer-container">
+      <mat-icon class="chat-icon">message</mat-icon>
+      <mat-form-field class="chat-input">
+         <input matInput #inputMessage maxlength="10000" placeholder="Type your message" [(ngModel)]="messageContent 
+         " (keyup.enter)="sendMessage(messageContent)">
+         <mat-hint align="end">
+            {{inputMessage.value.length}}/10000
+         </mat-hint>
+      </mat-form-field>
+   </div>
+   </mat-card>
+</div>
+
+<!-- ################## personalchat container #################################### -->
+
+
+
+<div *ngFor='let item of chatBoxArray' class= 'chatBox' [style.left.px]="item.position">
+<div  class = 'chatBoxHeader'>
+    <p   class = 'chatBoxHeaderText'>{{ item.name }}<button (click)='closeChatBox(item.name)'style='position:absolute;right:0px;padding:0px;'>&#10006;</button></p>
+
+</div>
+<div *ngFor='let room of personalChatArray' class='personalChatBox' id='personalChatView'>
+    <div *ngIf='item.room == room.room'>
+        <div  *ngFor='let messages of room.message'>
+            <p>
+               <b>{{messages.from.name}}-</b> {{messages.content}}
+      
+            </p>
+        
+        </div>
+    </div>
+</div> 
+    
+
+
+    <mat-form-field class="fitChatBox">
+        <input matInput placeholder="Type here..." #personalMessage (keyup.enter)="sendPersonalMessage(personalMessage.value,item.name); personalMessage.value=''">
+      </mat-form-field>
+
+</div>
+
+<!-- ################## sidenav container #################################### -->
+
+<div class="container">
+   <div class="col-lg-6">
+      <form (ngSubmit)="getVideos(f)" #f="ngForm">
+      <div class="form-group">
+         <label for="url">
+         <b>Enter Video URl</b>
+         </label>
+         <input type="text" id="furl" name="url" placeholder="video url" class="form-control" [(ngModel)]="url" required>
+         <input type="submit" value="Submit" [disabled]="!f.valid">
+         <p *ngIf="submitted" class="title">
+            <b>{{ videoData.title }}</b>
+         </p>
+      </div>
+      </form>
+   </div>
+   <div class="col-lg-6" *ngIf="submitted">
+      <iframe width="330" height="250" [src]="videoCridentials.url | safe" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+   </div>
+   <div class="row" *ngIf="submitted">
+      <div class="col-lg-6">
+         <p>
+            <i class="fa fa-eye" aria-hidden="true" id="icon"></i> {{ videoData.viewsCount }}
+            <i class="fa fa-thumbs-up" aria-hidden="true" id="icon"></i>{{ videoData.likeCount }}
+            <i class="fa fa-thumbs-down" aria-hidden="true" id="icon"></i> {{ videoData.dislikeCount }}
+            <i class="fa fa-heart" aria-hidden="true" id="icon"></i>{{ videoData.favoriteCount}}
+         </p>
+         <p>
+            <b>description: </b>
+            <br>
+            <br> {{videoData.description}}
+         </p>
+      </div>
+   </div>
+</div>

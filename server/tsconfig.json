@@ -1,0 +1,14 @@
+{
+  "files": [
+    "src/*.ts",
+    "src/model/*.ts"
+  ],
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "target": "es5",
+    "lib": ["es5", "es2015"]
+  },
+  "include": [
+    "src"
+    ]
+}

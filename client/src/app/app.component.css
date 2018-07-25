@@ -1,0 +1,12 @@
+.app-content {
+  width: 60%;
+  height: 60%;
+  box-sizing: border-box;
+} 
+
+
+.icon {
+  width: 3%;
+  height: 60%;
+  margin-right: 10px;
+}
